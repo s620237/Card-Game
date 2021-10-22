@@ -6,21 +6,67 @@ import java.util.Scanner;
 
 class Greek_Card_Game {
 
-  public static boolean playerTurn(String playerName, ArrayList<String> playerHand, ArrayList<String> discard, ArrayList<String> draw) {
+  public static void playerTurn(String playerName, ArrayList<String> playerHand, ArrayList<String> discard, ArrayList<String> draw, Scanner scnr) {
     //sorts cards in player's hand to make game more playable:
     sortHand(playerHand);
     //replaces draw pile if it goes down to zero:
     if(draw.size()==0) {
+      replaceDraw(discard, draw);
+    }
+    //displays the player's cards:
+    displayCards(playerName, playerHand);
+    boolean turnTaken = false;
+    while(!turnTaken) {
+      System.out.println("The top card is " + discard.get(0)+".");
+      System.out.println("Would you like to draw or play a card?");
+      System.out.println("1. draw");
+      System.out.println("2. play");
+      int playerChoice = scnr.nextInt();
+      if(playerChoice == 1) {
+        String drawnCard = draw.get(0);
+        playerHand.add(drawnCard);
+        draw.remove(0);
+        System.out.println("You drew a " + drawnCard);
+        turnTaken = true;
+      } else if (playerChoice == 2) {
+        System.out.println("What card would you like to play?");
+        scnr.nextLine();
+        String playedCard = scnr.nextLine();
+        if(!playerHand.contains(playedCard)) {
+          System.out.println("This card was not found in your hand. Please make sure it is typed correctly.");
+          continue;
+        } else {
+          String topCard = discard.get(0);
+          if((topCard.charAt(0)==playedCard.charAt(0))||(topCard.charAt(2)==playedCard.charAt(2))) {
+            discard.add(0, playedCard);
+            playerHand.remove(playedCard);
+            System.out.println("You played a " + playedCard);
+            turnTaken = true;
+          } else {
+            System.out.println("This card is not playable. You must play a card the same suit or number as the top of the discard pile.");
+            continue;
+          }
+        }
+      } else {
+        System.out.println("Invalid choice. Try again.");
+      }
+
+    }
+  }//end playerTurn
+
+  public static void replaceDraw(ArrayList<String> discard, ArrayList<String> draw) {
       String firstCard = discard.get(0);
       discard.remove(0);
-      shuffleDeck(discard);
+      Collections.shuffle(discard);
       for(int i = 0; i < discard.size();i++) {
         draw.add(discard.get(i));
       }
       discard.clear();
       discard.add(firstCard);
-    }
-    System.out.println("Hi, "+playerName+" your cards are: ");
+  }//end replaceDraw
+
+  public static void displayCards(String playerName, ArrayList<String> playerHand) {
+    System.out.println("Hi, "+playerName+", your cards are: ");
     for(int i = 0; i < playerHand.size();i++) {
       if(i==playerHand.size()-1) {
         System.out.print(playerHand.get(i));
@@ -29,10 +75,7 @@ class Greek_Card_Game {
         System.out.print(playerHand.get(i) + ", ");
       }
     }
-    System.out.println("The top card is " + discard.get(0)+".");
-    //to do: let player pick if they wanna draw or play, check if card is playable, do shifting, return things if ace.
-    return false;
-  }//end playerTurn
+  }//end displayCards
 
   public static void sortHand(ArrayList<String> playerHand) {
     ArrayList<String> diamonds = new ArrayList<String>();
@@ -97,78 +140,63 @@ class Greek_Card_Game {
       //creates array lists for discard and draw piles:
       ArrayList<String> discardPile = new ArrayList<String>();
       ArrayList<String> drawPile = new ArrayList<String>();
-      //stores player names and makes array lists for their cards:
-      System.out.println("input player one's name: ");
-      String p1Name = scnr.nextLine();
-      ArrayList<String> p1Cards = new ArrayList<String>();
-      System.out.println("input player two's name: ");
-      String p2Name = scnr.nextLine();
-      ArrayList<String> p2Cards = new ArrayList<String>();
-      System.out.println("input player three's name: ");
-      String p3Name = scnr.nextLine();
-      ArrayList<String> p3Cards = new ArrayList<String>();
-      System.out.println("input player four's name: ");
-      String p4Name = scnr.nextLine();
-      ArrayList<String> p4Cards = new ArrayList<String>();
+      ArrayList<String> names = new ArrayList<String>();
+      ArrayList<ArrayList<String>> hands = new ArrayList<ArrayList<String>>();
+      System.out.println("How many players? (game needs 2 to 5 players):");
+      int numPlayers = scnr.nextInt();
+      scnr.nextLine();
+      if(numPlayers<2||numPlayers>5) {
+        System.out.println("Number of players must be between 2 and 5.");
+        continue;
+      }
+      for (int i = 0; i < numPlayers; i++) {
+        System.out.println("Player " + (i+1) + " Name: ");
+        names.add(scnr.nextLine());
+      }
       //shuffles the deck and deals the cards to the players:
       shuffleDeck(cardDeck);
-      for(int i = 0; i < 7; i++) {
-        p1Cards.add(cardDeck[i]);
-        p2Cards.add(cardDeck[i+7]);
-        p3Cards.add(cardDeck[i+14]);
-        p4Cards.add(cardDeck[i+21]);
+      for(int i = 0; i < numPlayers; i++) {
+        ArrayList<String> hand = new ArrayList<String>();
+        for(int j = 0; j < 7; j++) {
+          hand.add(cardDeck[i*7+j]);
+        }
+        hands.add(hand);
       }
       //creates the discard pile and draw pile:
-      discardPile.add(cardDeck[28]);
-      for(int i = 29; i < cardDeck.length; i++) {
+      discardPile.add(cardDeck[numPlayers*7]);
+      for(int i = (numPlayers*7+1); i < cardDeck.length; i++) {
         drawPile.add(cardDeck[i]);
       }
-      //makes it so that the turns are ordered in the correct way:
-      int turnCounter = 1;
-      int turnIncrement = 1;
       //goes through the turns:
-      while(p1Cards.size()!=0&&p2Cards.size()!=0&&p3Cards.size()!=0&&p4Cards.size()!=0) {
-        if(turnCounter >= 5) {
-          turnCounter = 1;
+      int turnIndex = 0;
+      int turnIncrement = 1;
+      boolean playerWon = false;
+      int winningPlayer = 0;
+      while(!playerWon) {
+        for(int i = 0; i < hands.size(); i++) {
+          if((hands.get(i)).size()==0) {
+          playerWon = true;
+          winningPlayer = i;
+          }
         }
-        if(turnCounter <= 0) {
-          turnCounter = 4;
+        if(playerWon) {
+          System.out.println("Congrats " + names.get(winningPlayer) + ", you win!");
+          break;
         }
-        boolean a1Played = false, a2Played = false, a3Played = false, a4Played = false;
-        switch (turnCounter) {
-          case 1:
-            a1Played = playerTurn(p1Name, p1Cards, discardPile, drawPile);
-            break;
-          case 2:
-            a2Played = playerTurn(p2Name, p2Cards, discardPile, drawPile);
-            break;
-          case 3:
-            a3Played = playerTurn(p3Name, p3Cards, discardPile, drawPile);
-            break;
-          case 4:
-            a4Played = playerTurn(p4Name, p4Cards, discardPile, drawPile);
-            break;
+        if(turnIndex >= numPlayers) {
+          turnIndex = 0;
         }
+        if(turnIndex < 0) {
+          turnIndex = numPlayers;
+        }
+        playerTurn(names.get(turnIndex), hands.get(turnIndex), discardPile, drawPile, scnr);
+        String topCard = discardPile.get(0);
+        if(topCard.charAt(2)=='A') {
+          turnIncrement = turnIncrement*-1;
+        }
+        turnIndex = turnIndex + turnIncrement;
+      }
 
-        if(a1Played || a2Played || a3Played || a4Played) {
-          turnIncrement*=-1;
-        }
-        turnCounter+=turnIncrement;
-
-      }
-      //prints out victory messages:
-      if(p1Cards.size()==0) {
-        System.out.println(p1Name + " won!");
-      }
-      if(p2Cards.size()==0) {
-        System.out.println(p2Name + " won!");
-      }
-      if(p3Cards.size()==0) {
-        System.out.println(p3Name + " won!");
-      }
-      if(p4Cards.size()==0) {
-        System.out.println(p4Name + " won!");
-      }
       System.out.println("Play again?");
       int continueChoice = scnr.nextInt();
       if(continueChoice==1) {
