@@ -6,7 +6,14 @@ import java.util.Scanner;
 
 class Greek_Card_Game {
 
-  public static void playerTurn(String playerName, ArrayList<String> playerHand, ArrayList<String> discard, ArrayList<String> draw, Scanner scnr) {
+  public static String playerTurn(String playerName, ArrayList<String> playerHand, ArrayList<String> discard, ArrayList<String> draw, Scanner scnr, String refCard) {
+    /*
+    playerTurn is a method that is run every time a player takes a turn. It checks
+    for special conditions, makes sure that the draw pile is always full, and
+    allows players to draw or play cards if they have playable cards.
+    */
+    //creates a string to keep track of the last card played:
+    String lastCardPlayed = "   ";
     //sorts cards in player's hand to make game more playable:
     sortHand(playerHand);
     //replaces draw pile if it goes down to zero:
@@ -15,6 +22,7 @@ class Greek_Card_Game {
     }
     //displays the player's cards:
     displayCards(playerName, playerHand);
+    //general turn method sequence if the player doesn't meet any special rules:
     boolean turnTaken = false;
     while(!turnTaken) {
       System.out.println("The top card is " + discard.get(0)+".");
@@ -23,10 +31,7 @@ class Greek_Card_Game {
       System.out.println("2. play");
       int playerChoice = scnr.nextInt();
       if(playerChoice == 1) {
-        String drawnCard = draw.get(0);
-        playerHand.add(drawnCard);
-        draw.remove(0);
-        System.out.println("You drew a " + drawnCard);
+        drawCard(draw, playerHand);
         turnTaken = true;
       } else if (playerChoice == 2) {
         System.out.println("What card would you like to play?");
@@ -41,6 +46,7 @@ class Greek_Card_Game {
             discard.add(0, playedCard);
             playerHand.remove(playedCard);
             System.out.println("You played a " + playedCard);
+            lastCardPlayed = playedCard;
             turnTaken = true;
           } else {
             System.out.println("This card is not playable. You must play a card the same suit or number as the top of the discard pile.");
@@ -52,9 +58,23 @@ class Greek_Card_Game {
       }
 
     }
+    return lastCardPlayed;
   }//end playerTurn
 
+  public static void drawCard(ArrayList<String> draw, ArrayList<String> playerHand) {
+    //drawCard is a method that adds the first card of the draw deck to the player's hand and removes that card from the draw deck.
+      String drawnCard = draw.get(0);
+      playerHand.add(drawnCard);
+      draw.remove(0);
+      System.out.println("You drew a " + drawnCard);
+  }//end drawCard
   public static void replaceDraw(ArrayList<String> discard, ArrayList<String> draw) {
+    /*
+    replaceDraw is a method that replaces the draw pile if it becomes empty with
+    all but the top card of the discard pile. It simulates taking the first card
+    off of the discard pile to be the new discard pile and shuffling the remaining
+    cards to be the draw pile.
+    */
       String firstCard = discard.get(0);
       discard.remove(0);
       Collections.shuffle(discard);
@@ -66,6 +86,7 @@ class Greek_Card_Game {
   }//end replaceDraw
 
   public static void displayCards(String playerName, ArrayList<String> playerHand) {
+    //displayCards is a method that uses a for loop to show all of a player's cards.
     System.out.println("Hi, "+playerName+", your cards are: ");
     for(int i = 0; i < playerHand.size();i++) {
       if(i==playerHand.size()-1) {
@@ -78,6 +99,7 @@ class Greek_Card_Game {
   }//end displayCards
 
   public static void sortHand(ArrayList<String> playerHand) {
+    //sortHand is a method that sorts a player's hand into suits so that gameplay is easier.
     ArrayList<String> diamonds = new ArrayList<String>();
     ArrayList<String> hearts = new ArrayList<String>();
     ArrayList<String> clubs = new ArrayList<String>();
@@ -114,7 +136,7 @@ class Greek_Card_Game {
   }//end sortHand
 
   public static void shuffleDeck(String[] deck) {
-    //shuffles the deck that is fed into it:
+    //shuffleDeck is a method that shuffles the deck that is fed into it:
     for(int i = 0; i < 100; i++) {
       Random random = new Random();
       int randoNum = random.nextInt(deck.length);
@@ -142,6 +164,7 @@ class Greek_Card_Game {
       ArrayList<String> drawPile = new ArrayList<String>();
       ArrayList<String> names = new ArrayList<String>();
       ArrayList<ArrayList<String>> hands = new ArrayList<ArrayList<String>>();
+      //records number of players for indexing purposes:
       System.out.println("How many players? (game needs 2 to 5 players):");
       int numPlayers = scnr.nextInt();
       scnr.nextLine();
@@ -172,6 +195,7 @@ class Greek_Card_Game {
       int turnIncrement = 1;
       boolean playerWon = false;
       int winningPlayer = 0;
+      String lastCardPlayed = discardPile.get(0);
       while(!playerWon) {
         for(int i = 0; i < hands.size(); i++) {
           if((hands.get(i)).size()==0) {
@@ -187,11 +211,11 @@ class Greek_Card_Game {
           turnIndex = 0;
         }
         if(turnIndex < 0) {
-          turnIndex = numPlayers;
+          turnIndex = numPlayers-1;
         }
-        playerTurn(names.get(turnIndex), hands.get(turnIndex), discardPile, drawPile, scnr);
+        lastCardPlayed = playerTurn(names.get(turnIndex), hands.get(turnIndex), discardPile, drawPile, scnr, lastCardPlayed);
         String topCard = discardPile.get(0);
-        if(topCard.charAt(2)=='A') {
+        if(lastCardPlayed.charAt(0)=='A') {
           turnIncrement = turnIncrement*-1;
         }
         turnIndex = turnIndex + turnIncrement;
