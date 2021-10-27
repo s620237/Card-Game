@@ -1,8 +1,11 @@
+
 import javax.swing.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Random;
 import java.util.Scanner;
+import java.io.*;
+import java.util.*;
 
 class Greek_Card_Game {
 
@@ -20,41 +23,45 @@ class Greek_Card_Game {
     if(draw.size()==0) {
       replaceDraw(discard, draw);
     }
-    //displays the player's cards:
-    displayCards(playerName, playerHand);
     //general turn method sequence if the player doesn't meet any special rules:
     boolean turnTaken = false;
     while(!turnTaken) {
-      System.out.println("The top card is " + discard.get(0)+".");
-      System.out.println("Would you like to draw or play a card?");
-      System.out.println("1. draw");
-      System.out.println("2. play");
-      int playerChoice = scnr.nextInt();
-      if(playerChoice == 1) {
+      JOptionPane.showMessageDialog(null, "Please pass the computer to " + playerName);
+      String[] actionOptions = {"1. draw","2. play"}; // the options
+      String cardString = displayCards(playerName, playerHand);
+      int playerChoice = JOptionPane.showOptionDialog(null, cardString + "\nThe top card is "+ discard.get(0)+".","What would you like to do?", JOptionPane.DEFAULT_OPTION,
+      JOptionPane.QUESTION_MESSAGE, null,
+      actionOptions, actionOptions[0]);// asking the questions
+      if(playerChoice == 0) {
         drawCard(draw, playerHand);
         turnTaken = true;
-      } else if (playerChoice == 2) {
-        System.out.println("What card would you like to play?");
-        scnr.nextLine();
-        String playedCard = scnr.nextLine();
+      } else if (playerChoice == 1) {
+
+        int choiceIndex = JOptionPane.showOptionDialog(null, "The top card is "+ discard.get(0)+".\nWhat card would you like to play?",Arrays.toString(toArray(playerHand)), JOptionPane.DEFAULT_OPTION,
+        JOptionPane.QUESTION_MESSAGE, null,
+        toArray(playerHand), playerHand.get(0));
+        String playedCard = playerHand.get(choiceIndex);
         if(!playerHand.contains(playedCard)) {
-          System.out.println("This card was not found in your hand. Please make sure it is typed correctly.");
+          String output = "This card was not found in your hand. Please make sure it is typed correctly.";
+          JOptionPane.showMessageDialog(null, output);
+
           continue;
         } else {
           String topCard = discard.get(0);
           if((topCard.charAt(0)==playedCard.charAt(0))||(topCard.charAt(2)==playedCard.charAt(2))) {
             discard.add(0, playedCard);
             playerHand.remove(playedCard);
-            System.out.println("You played a " + playedCard);
+            String output = "You played a " + playedCard;
+            JOptionPane.showMessageDialog(null, output);
             lastCardPlayed = playedCard;
             turnTaken = true;
           } else {
-            System.out.println("This card is not playable. You must play a card the same suit or number as the top of the discard pile.");
+            JOptionPane.showMessageDialog(null, "This card is not playable. You must play a card the same suit or number as the top of the discard pile.");
             continue;
           }
         }
       } else {
-        System.out.println("Invalid choice. Try again.");
+        JOptionPane.showMessageDialog(null, "Invalid choice. Try again.");
       }
 
     }
@@ -66,7 +73,9 @@ class Greek_Card_Game {
       String drawnCard = draw.get(0);
       playerHand.add(drawnCard);
       draw.remove(0);
-      System.out.println("You drew a " + drawnCard);
+      String output;
+      output = "You drew a " + drawnCard;
+      JOptionPane.showMessageDialog(null, output);
   }//end drawCard
   public static void replaceDraw(ArrayList<String> discard, ArrayList<String> draw) {
     /*
@@ -85,17 +94,18 @@ class Greek_Card_Game {
       discard.add(firstCard);
   }//end replaceDraw
 
-  public static void displayCards(String playerName, ArrayList<String> playerHand) {
+  public static String displayCards(String playerName, ArrayList<String> playerHand) {
     //displayCards is a method that uses a for loop to show all of a player's cards.
-    System.out.println("Hi, "+playerName+", your cards are: ");
+    String output = "";
+    output+="Hi, "+playerName+", your cards are: ";
     for(int i = 0; i < playerHand.size();i++) {
       if(i==playerHand.size()-1) {
-        System.out.print(playerHand.get(i));
-        System.out.println();
+        output+=(playerHand.get(i));
       } else {
-        System.out.print(playerHand.get(i) + ", ");
+        output+=(playerHand.get(i) + ", ");
       }
     }
+    return output;
   }//end displayCards
 
   public static void sortHand(ArrayList<String> playerHand) {
@@ -147,6 +157,15 @@ class Greek_Card_Game {
     }
   }//end shuffleDeck
 
+  public static String[] toArray(ArrayList<String> arrayList) {
+    int length = arrayList.size();
+    String[] array = new String[length];
+    for (int i = 0; i < length; i++) {
+      array[i] = arrayList.get(i);
+    }
+    return array;
+  }
+
   public static void main(String[] args) {
     //creates a card deck:
     String[] cardDeck = new String[52];
@@ -165,16 +184,18 @@ class Greek_Card_Game {
       ArrayList<String> names = new ArrayList<String>();
       ArrayList<ArrayList<String>> hands = new ArrayList<ArrayList<String>>();
       //records number of players for indexing purposes:
-      System.out.println("How many players? (game needs 2 to 5 players):");
-      int numPlayers = scnr.nextInt();
-      scnr.nextLine();
+      int numPlayers = Integer.parseInt(JOptionPane.showInputDialog(
+      null, "How many players? (game needs 2 to 5 players):", null, JOptionPane.QUESTION_MESSAGE
+      ));
       if(numPlayers<2||numPlayers>5) {
-        System.out.println("Number of players must be between 2 and 5.");
+        JOptionPane.showMessageDialog(null, "Number of players must be between 2 and 5.");
         continue;
       }
       for (int i = 0; i < numPlayers; i++) {
-        System.out.println("Player " + (i+1) + " Name: ");
-        names.add(scnr.nextLine());
+        String name = (JOptionPane.showInputDialog(
+        null, "Player " + (i+1) + " Name: ", null, JOptionPane.QUESTION_MESSAGE
+        ));
+        names.add(name);
       }
       //shuffles the deck and deals the cards to the players:
       shuffleDeck(cardDeck);
@@ -204,7 +225,7 @@ class Greek_Card_Game {
           }
         }
         if(playerWon) {
-          System.out.println("Congrats " + names.get(winningPlayer) + ", you win!");
+          JOptionPane.showMessageDialog(null, "Congrats " + names.get(winningPlayer) + ", you win!");
           break;
         }
         if(turnIndex >= numPlayers) {
@@ -222,7 +243,10 @@ class Greek_Card_Game {
       }
 
       System.out.println("Play again?");
-      int continueChoice = scnr.nextInt();
+      String [] play_again = {"yes","no"};
+      int continueChoice = JOptionPane.showOptionDialog(null, "Play again?","(Choose an action)", JOptionPane.DEFAULT_OPTION,
+      JOptionPane.QUESTION_MESSAGE, null,
+      play_again, play_again[0]);
       if(continueChoice==1) {
         break;
       }
