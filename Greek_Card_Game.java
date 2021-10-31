@@ -6,6 +6,7 @@ import java.util.Random;
 import java.util.Scanner;
 import java.io.*;
 import java.util.*;
+import java.Lilianarules.*;
 
 class Greek_Card_Game {
 
@@ -23,6 +24,8 @@ class Greek_Card_Game {
     if(draw.size()==0) {
       replaceDraw(discard, draw);
     }
+    Lilianarules.Liliana2(string card, int player, ArrayList<String> playerHand, ArrayList <String>playershands, ArrayList <String> players); // Liliana's first rule
+    Lilianarules.Liliana3(string card, int player, ArrayList <String> playercards,ArrayList<String> discard);
     //general turn method sequence if the player doesn't meet any special rules:
     boolean turnTaken = false;
     while(!turnTaken) {
