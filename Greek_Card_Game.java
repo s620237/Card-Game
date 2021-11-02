@@ -1,16 +1,19 @@
-
+/*
+Catherine Larson
+UIN: 431006908
+PC User
+Card game
+*/
 import javax.swing.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Random;
-import java.util.Scanner;
 import java.io.*;
 import java.util.*;
-import java.Lilianarules.*;
 
 class Greek_Card_Game {
-
-  public static String playerTurn(String playerName, ArrayList<String> playerHand, ArrayList<String> discard, ArrayList<String> draw, Scanner scnr, String refCard) {
+  public static String playerTurn(String playerName, ArrayList<String> playerHand, ArrayList<String> discard,
+  ArrayList<String> draw, Scanner scnr, String refCard, ArrayList<ArrayList<String>> hands, ArrayList<String> names) {
     /*
     playerTurn is a method that is run every time a player takes a turn. It checks
     for special conditions, makes sure that the draw pile is always full, and
@@ -20,19 +23,25 @@ class Greek_Card_Game {
     String lastCardPlayed = "   ";
     //sorts cards in player's hand to make game more playable:
     sortHand(playerHand);
-    //replaces draw pile if it goes down to zero:
-    if(draw.size()==0) {
+    //replaces draw pile if it goes down to four, so that drawing four cards will work:
+    if(draw.size()<=4) {
       replaceDraw(discard, draw);
     }
-    Lilianarules.Liliana2(string card, int player, ArrayList<String> playerHand, ArrayList <String>playershands, ArrayList <String> players); // Liliana's first rule
-    Lilianarules.Liliana3(string card, int player, ArrayList <String> playercards,ArrayList<String> discard);
+    //This is where special rules go if they are dependent upon the card played before the turn:
+
+    if(refCard.charAt(0)=='4') {
+      Catherine1(playerName, playerHand, draw);
+      return "   ";
+    }
+
     //general turn method sequence if the player doesn't meet any special rules:
     boolean turnTaken = false;
     while(!turnTaken) {
       JOptionPane.showMessageDialog(null, "Please pass the computer to " + playerName);
       String[] actionOptions = {"1. draw","2. play"}; // the options
       String cardString = displayCards(playerName, playerHand);
-      int playerChoice = JOptionPane.showOptionDialog(null, cardString + "\nThe top card is "+ discard.get(0)+".","What would you like to do?", JOptionPane.DEFAULT_OPTION,
+      int playerChoice = JOptionPane.showOptionDialog(null,
+      cardString + "\nThe top card is "+ discard.get(0)+".","What would you like to do?", JOptionPane.DEFAULT_OPTION,
       JOptionPane.QUESTION_MESSAGE, null,
       actionOptions, actionOptions[0]);// asking the questions
       if(playerChoice == 0) {
@@ -40,8 +49,8 @@ class Greek_Card_Game {
         turnTaken = true;
       } else if (playerChoice == 1) {
 
-        int choiceIndex = JOptionPane.showOptionDialog(null, "The top card is "+ discard.get(0)+".\nWhat card would you like to play?",Arrays.toString(toArray(playerHand)), JOptionPane.DEFAULT_OPTION,
-        JOptionPane.QUESTION_MESSAGE, null,
+        int choiceIndex = JOptionPane.showOptionDialog(null, "The top card is "+ discard.get(0)+".\nWhat card would you like to play?",
+        Arrays.toString(toArray(playerHand)), JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null,
         toArray(playerHand), playerHand.get(0));
         String playedCard = playerHand.get(choiceIndex);
         if(!playerHand.contains(playedCard)) {
@@ -56,6 +65,17 @@ class Greek_Card_Game {
             playerHand.remove(playedCard);
             String output = "You played a " + playedCard;
             JOptionPane.showMessageDialog(null, output);
+
+            //this is where special rules go for players taking action immediately after they play a card:
+            if((playedCard.charAt(0)=='2')&&(playedCard.charAt(2)=='H' || playedCard.charAt(2)=='D')) {
+              Liliana2(playerName, playerHand, hands, names);
+            }
+            if(playedCard.charAt(0)=='3' && playedCard.charAt(2)=='S') {
+              Liliana3(playerName, playerHand, discard);
+              lastCardPlayed = discard.get(0);
+              turnTaken = true;
+              break;
+            }
             lastCardPlayed = playedCard;
             turnTaken = true;
           } else {
@@ -159,7 +179,7 @@ class Greek_Card_Game {
       deck[randoNum2] = holder;
     }
   }//end shuffleDeck
-
+  //toArray is a method used in other methods that turns an ArrayList of Strings into an array of Strings:
   public static String[] toArray(ArrayList<String> arrayList) {
     int length = arrayList.size();
     String[] array = new String[length];
@@ -167,6 +187,50 @@ class Greek_Card_Game {
       array[i] = arrayList.get(i);
     }
     return array;
+  }//end toArray
+  //Start of Special rules
+
+  //Liliana2 makes it so a player switches hands with another player when it is called.
+  public static void Liliana2(String playerName, ArrayList<String> playerHand, ArrayList<ArrayList<String>> hands, ArrayList<String> names){
+    int player_to_switch = JOptionPane.showOptionDialog(null,
+    "Hi, "+playerName+", which player do you want to switch hands with?","(Choose an action)", JOptionPane.DEFAULT_OPTION,
+    JOptionPane.QUESTION_MESSAGE, null,
+  toArray(names), names.get(0));
+    ArrayList<String> handToSwitch = hands.get(player_to_switch);
+    String[] temp1 = toArray(playerHand);
+    String[] temp2 = toArray(handToSwitch);
+    playerHand.clear();
+    hands.get(player_to_switch).clear();
+    for (String card : temp1) {
+      handToSwitch.add(card);
+    }
+    for (String card : temp2) {
+      playerHand.add(card);
+    }
+  }// end Liliana2
+  //Liliana3 makes it so a player discards all but three cards when it is called.
+  public static void Liliana3 (String playerName,  ArrayList<String> playerHand, ArrayList<String> discard){
+    JOptionPane.showMessageDialog(null, "Congrats, you get to discard all but three cards in your hand!");
+    if(playerHand.size() <= 3) {
+      JOptionPane.showMessageDialog(null, "Looks like you already have three or less cards in your hand, no discarding for you!");
+    } else {
+      while(playerHand.size() > 3) {
+        int choiceIndex = JOptionPane.showOptionDialog(null, "What card would you like to play?",
+        Arrays.toString(toArray(playerHand)), JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null,
+        toArray(playerHand), playerHand.get(0));
+        String playedCard = playerHand.get(choiceIndex);
+        playerHand.remove(playedCard);
+        discard.add(playedCard);
+        }
+      }
+    }
+  // end Liliana3
+  //Catherine1 makes it so that a player draws four cards when it is called.
+  public static void Catherine1 (String playerName, ArrayList<String> playerHand, ArrayList<String> draw) {
+    JOptionPane.showMessageDialog(null, "Sorry, " + playerName + ", you have to draw four cards!");
+    for (int i = 0; i < 4; i++) {
+      drawCard(draw, playerHand);
+    }
   }
 
   public static void main(String[] args) {
@@ -237,7 +301,8 @@ class Greek_Card_Game {
         if(turnIndex < 0) {
           turnIndex = numPlayers-1;
         }
-        lastCardPlayed = playerTurn(names.get(turnIndex), hands.get(turnIndex), discardPile, drawPile, scnr, lastCardPlayed);
+        lastCardPlayed = playerTurn(names.get(turnIndex), hands.get(turnIndex), discardPile,
+        drawPile, scnr, lastCardPlayed, hands, names);
         String topCard = discardPile.get(0);
         if(lastCardPlayed.charAt(0)=='A') {
           turnIncrement = turnIncrement*-1;
@@ -245,7 +310,6 @@ class Greek_Card_Game {
         turnIndex = turnIndex + turnIncrement;
       }
 
-      System.out.println("Play again?");
       String [] play_again = {"yes","no"};
       int continueChoice = JOptionPane.showOptionDialog(null, "Play again?","(Choose an action)", JOptionPane.DEFAULT_OPTION,
       JOptionPane.QUESTION_MESSAGE, null,
@@ -256,5 +320,4 @@ class Greek_Card_Game {
     }
 
   }//end main
-
-}
+}//end class
