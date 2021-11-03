@@ -42,7 +42,7 @@ class Greek_Card_Game {
     //general turn method sequence if the player doesn't meet any special rules:
     boolean turnTaken = false;
     while(!turnTaken) {
-      JOptionPane.showMessageDialog(null, "Offer the shield to Lord/Lady" + playerName);
+      JOptionPane.showMessageDialog(null, "Offer the shield to Lord/Lady " + playerName);
       String[] actionOptions = {"1. Gain a warrior","2. Put forth your champion"}; // the options
       String cardString = displayCards(playerName, playerHand);
       int playerChoice = JOptionPane.showOptionDialog(null,
@@ -290,12 +290,13 @@ class Greek_Card_Game {
       ArrayList<String> names = new ArrayList<String>();
       ArrayList<ArrayList<String>> hands = new ArrayList<ArrayList<String>>();
       //records number of players for indexing purposes:
-      String playerOption = JOptionPane.showInputDialog(
-      null, "How many Gods/Goddesses? (game needs 2 to 5 players):", null, JOptionPane.QUESTION_MESSAGE
-      );
-      if (playerOption == null) System.exit(0);
-      int numPlayers = Integer.parseInt(playerOption);
-      if(numPlayers<2||numPlayers>5) {
+      String message = "How many Gods/Goddesses? (game needs 2 to 5 players):";
+      String [] options = {"2 players","3 players", "4 players", "5 players"};
+      int numPlayers = JOptionPane.showOptionDialog(null, message,"(Choose an action)", JOptionPane.DEFAULT_OPTION,
+      JOptionPane.QUESTION_MESSAGE, null,
+      options, options[0]) + 2;
+      if (numPlayers == JOptionPane.CLOSED_OPTION) System.exit(0);
+      else if(numPlayers<2||numPlayers>5) {
         JOptionPane.showMessageDialog(null, "Number of Gods/Goddesses must be between 2 and 5.");
         continue;
       }
