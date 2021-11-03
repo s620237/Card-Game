@@ -294,7 +294,7 @@ class Greek_Card_Game {
     int numPlayers = JOptionPane.showOptionDialog(null, message,"(Choose an action)", JOptionPane.DEFAULT_OPTION,
     JOptionPane.QUESTION_MESSAGE, null,
     options, options[0]) + 2;
-    if (numPlayers == JOptionPane.CLOSED_OPTION) System.exit(0);
+    if ((numPlayers - 2) == JOptionPane.CLOSED_OPTION) System.exit(0);
     for (int i = 0; i < numPlayers; i++) {
       String name = (JOptionPane.showInputDialog(
       null, "Lord/Lady " + (i+1) + " Name: ", null, JOptionPane.QUESTION_MESSAGE
