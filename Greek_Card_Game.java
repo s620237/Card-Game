@@ -282,26 +282,27 @@ class Greek_Card_Game {
         cardDeck[(i*numbers.length)+j] = numbers[j]+"-"+suits[i];
       }//end for loop
     }//end for loop
-    Scanner scnr = new Scanner(System.in);
-    //creates array lists for discard and draw piles:
-    ArrayList<String> discardPile = new ArrayList<String>();
-    ArrayList<String> drawPile = new ArrayList<String>();
-    ArrayList<String> names = new ArrayList<String>();
-    ArrayList<ArrayList<String>> hands = new ArrayList<ArrayList<String>>();
-    //records number of players for indexing purposes:
-    String message = "How many Gods/Goddesses? (game needs 2 to 5 players):";
-    String [] options = {"2 players","3 players", "4 players", "5 players"};
-    int numPlayers = JOptionPane.showOptionDialog(null, message,"(Choose an action)", JOptionPane.DEFAULT_OPTION,
-    JOptionPane.QUESTION_MESSAGE, null,
-    options, options[0]) + 2;
-    if ((numPlayers - 2) == JOptionPane.CLOSED_OPTION) System.exit(0);
-    for (int i = 0; i < numPlayers; i++) {
-      String name = (JOptionPane.showInputDialog(
-      null, "Lord/Lady " + (i+1) + " Name: ", null, JOptionPane.QUESTION_MESSAGE
-      ));
-      if (name == null) System.exit(0);
-      names.add(name);
-    }
+    while (true) {
+      Scanner scnr = new Scanner(System.in);
+      //creates array lists for discard and draw piles:
+      ArrayList<String> discardPile = new ArrayList<String>();
+      ArrayList<String> drawPile = new ArrayList<String>();
+      ArrayList<String> names = new ArrayList<String>();
+      ArrayList<ArrayList<String>> hands = new ArrayList<ArrayList<String>>();
+      //records number of players for indexing purposes:
+      String message = "How many Gods/Goddesses? (game needs 2 to 5 players):";
+      String [] options = {"2 players","3 players", "4 players", "5 players"};
+      int numPlayers = JOptionPane.showOptionDialog(null, message,"(Choose an action)", JOptionPane.DEFAULT_OPTION,
+      JOptionPane.QUESTION_MESSAGE, null,
+      options, options[0]) + 2;
+      if ((numPlayers - 2) == JOptionPane.CLOSED_OPTION) System.exit(0);
+      for (int i = 0; i < numPlayers; i++) {
+        String name = (JOptionPane.showInputDialog(
+        null, "Lord/Lady " + (i+1) + " Name: ", null, JOptionPane.QUESTION_MESSAGE
+        ));
+        if (name == null) System.exit(0);
+        names.add(name);
+      }
       //shuffles the deck and deals the cards to the players:
       shuffleDeck(cardDeck);
       for(int i = 0; i < numPlayers; i++) {
