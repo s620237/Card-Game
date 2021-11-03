@@ -49,6 +49,7 @@ class Greek_Card_Game {
       cardString + "\nThe top card is "+ discard.get(0)+".","How will you proceed, great God(dess) "+playerName+"?", JOptionPane.DEFAULT_OPTION,
       JOptionPane.QUESTION_MESSAGE, null,
       actionOptions, actionOptions[0]);// asking the questions
+      if (playerChoice == JOptionPane.CLOSED_OPTION) System.exit(0);
       if(playerChoice == 0) {
         drawCard(draw, playerHand);
         turnTaken = true;
@@ -289,9 +290,11 @@ class Greek_Card_Game {
       ArrayList<String> names = new ArrayList<String>();
       ArrayList<ArrayList<String>> hands = new ArrayList<ArrayList<String>>();
       //records number of players for indexing purposes:
-      int numPlayers = Integer.parseInt(JOptionPane.showInputDialog(
+      String playerOption = JOptionPane.showInputDialog(
       null, "How many Gods/Goddesses? (game needs 2 to 5 players):", null, JOptionPane.QUESTION_MESSAGE
-      ));
+      );
+      if (playerOption == null) System.exit(0);
+      int numPlayers = Integer.parseInt(playerOption);
       if(numPlayers<2||numPlayers>5) {
         JOptionPane.showMessageDialog(null, "Number of Gods/Goddesses must be between 2 and 5.");
         continue;
@@ -300,6 +303,7 @@ class Greek_Card_Game {
         String name = (JOptionPane.showInputDialog(
         null, "Lord/Lady " + (i+1) + " Name: ", null, JOptionPane.QUESTION_MESSAGE
         ));
+        if (name == null) System.exit(0);
         names.add(name);
       }
       //shuffles the deck and deals the cards to the players:
