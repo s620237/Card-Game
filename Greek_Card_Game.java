@@ -42,11 +42,11 @@ class Greek_Card_Game {
     //general turn method sequence if the player doesn't meet any special rules:
     boolean turnTaken = false;
     while(!turnTaken) {
-      JOptionPane.showMessageDialog(null, "Please pass the computer to " + playerName);
-      String[] actionOptions = {"1. draw","2. play"}; // the options
+      JOptionPane.showMessageDialog(null, "Offer the shield to Lord/Lady" + playerName);
+      String[] actionOptions = {"1. Gain a warrior","2. Put forth your champion"}; // the options
       String cardString = displayCards(playerName, playerHand);
       int playerChoice = JOptionPane.showOptionDialog(null,
-      cardString + "\nThe top card is "+ discard.get(0)+".","What would you like to do?", JOptionPane.DEFAULT_OPTION,
+      cardString + "\nThe top card is "+ discard.get(0)+".","How will you proceed, great God(dess) "+playerName+"?", JOptionPane.DEFAULT_OPTION,
       JOptionPane.QUESTION_MESSAGE, null,
       actionOptions, actionOptions[0]);// asking the questions
       if(playerChoice == 0) {
@@ -54,12 +54,12 @@ class Greek_Card_Game {
         turnTaken = true;
       } else if (playerChoice == 1) {
 
-        int choiceIndex = JOptionPane.showOptionDialog(null, "The top card is "+ discard.get(0)+".\nWhat card would you like to play?",
+        int choiceIndex = JOptionPane.showOptionDialog(null, "The top card is "+ discard.get(0)+".\nWho shall be your champion?",
         Arrays.toString(toArray(playerHand)), JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null,
         toArray(playerHand), playerHand.get(0));
         String playedCard = playerHand.get(choiceIndex);
         if(!playerHand.contains(playedCard)) {
-          String output = "This card was not found in your hand. Please make sure it is typed correctly."; //check
+          String output = "This life is not yours to change. Please make sure it is typed correctly."; //check
           JOptionPane.showMessageDialog(null, output);
 
           continue;
@@ -68,7 +68,7 @@ class Greek_Card_Game {
           if((topCard.charAt(0)==playedCard.charAt(0))||(topCard.charAt(2)==playedCard.charAt(2))) {
             discard.add(0, playedCard);
             playerHand.remove(playedCard);
-            String output = "You played a " + playedCard;
+            String output = "You have set " + playedCard +" on this great quest.";
             JOptionPane.showMessageDialog(null, output);
 
             //this is where special rules go for players taking action immediately after they play a card:
@@ -90,7 +90,7 @@ class Greek_Card_Game {
             lastCardPlayed = playedCard;
             turnTaken = true;
           } else {
-            JOptionPane.showMessageDialog(null, "This card is not playable. You must play a card the same suit or number as the top of the discard pile.");
+            JOptionPane.showMessageDialog(null, "This warrior is not suited for this quest. You must select this champion the same suit or number as the top of the discard pile.");
             continue;
           }
         }
@@ -108,7 +108,7 @@ class Greek_Card_Game {
       playerHand.add(drawnCard);
       draw.remove(0);
       String output;
-      output = "You drew a " + drawnCard;
+      output = "You gained " + drawnCard;
       JOptionPane.showMessageDialog(null, output);
     return drawnCard;
   }//end drawCard
@@ -132,7 +132,7 @@ class Greek_Card_Game {
   public static String displayCards(String playerName, ArrayList<String> playerHand) {
     //displayCards is a method that uses a for loop to show all of a player's cards.
     String output = "";
-    output+="Hi, "+playerName+", your cards are: ";
+    output+="It is an honor, Lord/Lady "+playerName+", your warriors are: ";
     for(int i = 0; i < playerHand.size();i++) {
       if(i==playerHand.size()-1) {
         output+=(playerHand.get(i));
@@ -205,7 +205,7 @@ class Greek_Card_Game {
   //Liliana2 makes it so a player switches hands with another player when it is called.
   public static void Liliana2(String playerName, ArrayList<String> playerHand, ArrayList<ArrayList<String>> hands, ArrayList<String> names){
     int player_to_switch = JOptionPane.showOptionDialog(null,
-    "Hi, "+playerName+", which player do you want to switch hands with?","(Choose an action)", JOptionPane.DEFAULT_OPTION,
+    "Your Grace! Lord/Lady "+playerName+", which God/Goddess do you want to switch warriors with?","(Choose an action)", JOptionPane.DEFAULT_OPTION,
     JOptionPane.QUESTION_MESSAGE, null,
   toArray(names), names.get(0));
     ArrayList<String> handToSwitch = hands.get(player_to_switch);
@@ -222,12 +222,12 @@ class Greek_Card_Game {
   }// end Liliana2
   //Liliana3 makes it so a player discards all but three cards when it is called.
   public static void Liliana3 (String playerName,  ArrayList<String> playerHand, ArrayList<String> discard){
-    JOptionPane.showMessageDialog(null, "Congrats, you get to discard all but three cards in your hand!");
+    JOptionPane.showMessageDialog(null, "Congrats, you get to put forth all but three warriors in your hand!");
     if(playerHand.size() <= 3) {
-      JOptionPane.showMessageDialog(null, "Looks like you already have three or less cards in your hand, no discarding for you!");
+      JOptionPane.showMessageDialog(null, "Looks like you already have three or less warriors to choose from, no sending people on quests for you!");
     } else {
       while(playerHand.size() > 3) {
-        int choiceIndex = JOptionPane.showOptionDialog(null, "What card would you like to play?",
+        int choiceIndex = JOptionPane.showOptionDialog(null, "Who shall be your champiom?",
         Arrays.toString(toArray(playerHand)), JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null,
         toArray(playerHand), playerHand.get(0));
         String playedCard = playerHand.get(choiceIndex);
@@ -239,7 +239,7 @@ class Greek_Card_Game {
   // end Liliana3
   //Catherine1 makes it so that a player draws four cards when it is called.
   public static void Catherine1 (String playerName, ArrayList<String> playerHand, ArrayList<String> draw) {
-    JOptionPane.showMessageDialog(null, "Sorry, " + playerName + ", you have to draw four cards!");
+    JOptionPane.showMessageDialog(null, "Apologies Lord/Lady " + playerName + ", you must take on four more warriors!");
     for (int i = 0; i < 4; i++) {
       drawCard(draw, playerHand);
     }
@@ -247,7 +247,7 @@ class Greek_Card_Game {
   
   //Luke1: if 10 is played, next player must draw until same suite is called (or no more cards remain)
   public static void Luke1(String playerName, ArrayList<String> playerHand, ArrayList<String> draw, char lSuite) {
-    JOptionPane.showMessageDialog(null, "Sorry, " + playerName + ", you have to draw until you get a " + lSuite + "!");
+    JOptionPane.showMessageDialog(null, "Apologies, Lord/Lady " + playerName + ", you have to draw until you get a " + lSuite + "!");
     String newCard = drawCard(draw, playerHand);
     while (newCard.charAt(2) != lSuite) {
       newCard = drawCard(draw, playerHand);
@@ -256,11 +256,11 @@ class Greek_Card_Game {
 
   //Luke2: if 9 is played - every odd is played (contrasts w/ Patrick's rule?)??
   public static void Luke2(String playerName, ArrayList<String> playerHand, ArrayList<String> discard) {
-    JOptionPane.showMessageDialog(null, "Congrats " + playerName +", if you have any other odds in your hand, then you can play all of them!");
+    JOptionPane.showMessageDialog(null, "Congrats Lord/Lady " + playerName +", if you have any other odd warriors in your hand, then you can play all of them!");
     for (int i = 0; i < playerHand.size(); i++) {
       if (Character.isDigit(playerHand.get(i).charAt(0))) {
         if (Character.getNumericValue(playerHand.get(i).charAt(0)) % 2 == 1) {
-          JOptionPane.showMessageDialog(null, "You played a " + playerHand.get(i));
+          JOptionPane.showMessageDialog(null, "Your champion is " + playerHand.get(i));
           String playedCard = playerHand.get(i);
           playerHand.remove(playedCard);
           discard.add(playedCard);
@@ -290,15 +290,15 @@ class Greek_Card_Game {
       ArrayList<ArrayList<String>> hands = new ArrayList<ArrayList<String>>();
       //records number of players for indexing purposes:
       int numPlayers = Integer.parseInt(JOptionPane.showInputDialog(
-      null, "How many players? (game needs 2 to 5 players):", null, JOptionPane.QUESTION_MESSAGE
+      null, "How many Gods/Goddesses? (game needs 2 to 5 players):", null, JOptionPane.QUESTION_MESSAGE
       ));
       if(numPlayers<2||numPlayers>5) {
-        JOptionPane.showMessageDialog(null, "Number of players must be between 2 and 5.");
+        JOptionPane.showMessageDialog(null, "Number of Gods/Goddesses must be between 2 and 5.");
         continue;
       }
       for (int i = 0; i < numPlayers; i++) {
         String name = (JOptionPane.showInputDialog(
-        null, "Player " + (i+1) + " Name: ", null, JOptionPane.QUESTION_MESSAGE
+        null, "Lord/Lady " + (i+1) + " Name: ", null, JOptionPane.QUESTION_MESSAGE
         ));
         names.add(name);
       }
@@ -351,7 +351,7 @@ class Greek_Card_Game {
             previousCard = discardPile.get(0);
           }
           if (lastCardPlayed.indexOf('K') != -1 && previousCard.indexOf('Q') != -1){
-              JOptionPane.showMessageDialog(null, "A king was played after a Queen, current player gets to go again.");
+              JOptionPane.showMessageDialog(null, "A king was played after a Queen, current God/Goddess gets to put forth another warriors.");
             if(turnIncrement == 1){ //if turns are normally progressing, subtracts one because one will be added.
               turnIndex--;
             }
@@ -366,7 +366,7 @@ class Greek_Card_Game {
 
 
         if(playerWon) {
-          JOptionPane.showMessageDialog(null, "Congrats " + names.get(winningPlayer) + ", you win!");
+          JOptionPane.showMessageDialog(null, "Congrats Lord/Lady " + names.get(winningPlayer) + ", you win!");
           break;
         }
         if(turnIndex >= numPlayers) {
