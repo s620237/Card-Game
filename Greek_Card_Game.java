@@ -33,6 +33,11 @@ class Greek_Card_Game {
       Catherine1(playerName, playerHand, draw);
       return "   ";
     }
+    
+    if (refCard.charAt(0)=='T'){
+      Luke1(playerName, playerHand, draw, refCard.charAt(2));
+      return "   ";
+    }
 
     //general turn method sequence if the player doesn't meet any special rules:
     boolean turnTaken = false;
@@ -76,6 +81,12 @@ class Greek_Card_Game {
               turnTaken = true;
               break;
             }
+            if (playedCard.charAt(0) == '9') {
+              Luke2(playerName, playerHand, discard);
+              lastCardPlayed = discard.get(0);
+              turnTaken = true;
+              break;
+            }
             lastCardPlayed = playedCard;
             turnTaken = true;
           } else {
@@ -91,7 +102,7 @@ class Greek_Card_Game {
     return lastCardPlayed;
   }//end playerTurn
 
-  public static void drawCard(ArrayList<String> draw, ArrayList<String> playerHand) {
+  public static String drawCard(ArrayList<String> draw, ArrayList<String> playerHand) {
     //drawCard is a method that adds the first card of the draw deck to the player's hand and removes that card from the draw deck.
       String drawnCard = draw.get(0);
       playerHand.add(drawnCard);
@@ -99,6 +110,7 @@ class Greek_Card_Game {
       String output;
       output = "You drew a " + drawnCard;
       JOptionPane.showMessageDialog(null, output);
+    return drawnCard;
   }//end drawCard
   public static void replaceDraw(ArrayList<String> discard, ArrayList<String> draw) {
     /*
@@ -232,6 +244,31 @@ class Greek_Card_Game {
       drawCard(draw, playerHand);
     }
   }
+  
+  //Luke1: if 10 is played, next player must draw until same suite is called (or no more cards remain)
+  public static void Luke1(String playerName, ArrayList<String> playerHand, ArrayList<String> draw, char lSuite) {
+    JOptionPane.showMessageDialog(null, "Sorry, " + playerName + ", you have to draw until you get a " + lSuite + "!");
+    String newCard = drawCard(draw, playerHand);
+    while (newCard.charAt(2) != lSuite) {
+      newCard = drawCard(draw, playerHand);
+    }
+  } // end Luke1
+
+  //Luke2: if 9 is played - every odd is played (contrasts w/ Patrick's rule?)??
+  public static void Luke2(String playerName, ArrayList<String> playerHand, ArrayList<String> discard) {
+    JOptionPane.showMessageDialog(null, "Congrats " + playerName +", if you have any other odds in your hand, then you can play all of them!");
+    for (int i = 0; i < playerHand.size(); i++) {
+      if (Character.isDigit(playerHand.get(i).charAt(0))) {
+        if (Character.getNumericValue(playerHand.get(i).charAt(0)) % 2 == 1) {
+          JOptionPane.showMessageDialog(null, "You played a " + playerHand.get(i));
+          String playedCard = playerHand.get(i);
+          playerHand.remove(playedCard);
+          discard.add(playedCard);
+          i--; //since card (plus its position was just removed), go back 1 in position of the cards in the hand
+        }
+      }
+    }
+  } // end Luke2
 
   public static void main(String[] args) {
     //creates a card deck:
