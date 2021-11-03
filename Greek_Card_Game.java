@@ -54,7 +54,7 @@ class Greek_Card_Game {
         toArray(playerHand), playerHand.get(0));
         String playedCard = playerHand.get(choiceIndex);
         if(!playerHand.contains(playedCard)) {
-          String output = "This card was not found in your hand. Please make sure it is typed correctly.";
+          String output = "This card was not found in your hand. Please make sure it is typed correctly."; //check
           JOptionPane.showMessageDialog(null, output);
 
           continue;
@@ -238,6 +238,7 @@ class Greek_Card_Game {
     String[] cardDeck = new String[52];
     String[] suits = {"S", "H", "D", "C"};
     String[] numbers = {"A", "2", "3", "4", "5", "6", "7", "8", "9", "T", "J", "Q", "K"};
+    int oddCounter = 0; //This is for a rule pertaining to the amount of odd number cards played.
     for(int i = 0; i < suits.length; i++) {
       for(int j = 0; j < numbers.length; j++) {
         cardDeck[(i*numbers.length)+j] = numbers[j]+"-"+suits[i];
@@ -291,6 +292,42 @@ class Greek_Card_Game {
           winningPlayer = i;
           }
         }
+        //Patrick's Rules, but in main because calling a method with 5 parameters was more work than simply putting the rules in main
+
+        //testing rules
+        //rule 7
+          if (lastCardPlayed.indexOf('A') != -1 || lastCardPlayed.indexOf('3') != -1 || lastCardPlayed.indexOf('5') != -1 || lastCardPlayed.indexOf('7') != -1 || lastCardPlayed.indexOf('9') != -1){
+            oddCounter++;
+              } // end if checking for odds
+          else { // end reset of odd counter if card is not odd
+            oddCounter = 0;
+            }
+          if (oddCounter == 5){
+            playerWon = true;
+          } // end if that ends game if 5 odd cards are played in a row.
+
+          //rule 8 : King after Queen
+          String previousCard = discardPile.get(0);
+          try {
+            previousCard = discardPile.get(1);
+          } catch (Exception e){
+            previousCard = discardPile.get(0);
+          }
+          if (lastCardPlayed.indexOf('K') != -1 && previousCard.indexOf('Q') != -1){
+              JOptionPane.showMessageDialog(null, "A king was played after a Queen, current player gets to go again.");
+            if(turnIncrement == 1){ //if turns are normally progressing, subtracts one because one will be added.
+              turnIndex--;
+            }
+            else{ // if order of players has been reversed. Adds one because -1 will later be subtracted so person who played king will go again
+                turnIndex++;
+              } // end else
+            }//end if
+
+
+
+
+
+
         if(playerWon) {
           JOptionPane.showMessageDialog(null, "Congrats " + names.get(winningPlayer) + ", you win!");
           break;
