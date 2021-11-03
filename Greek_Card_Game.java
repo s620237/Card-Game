@@ -301,6 +301,7 @@ class Greek_Card_Game {
       ));
       if (name == null) System.exit(0);
       names.add(name);
+    }
       //shuffles the deck and deals the cards to the players:
       shuffleDeck(cardDeck);
       for(int i = 0; i < numPlayers; i++) {
