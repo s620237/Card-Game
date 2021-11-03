@@ -1,0 +1,30 @@
+ //  THIS IS ONLY A COPY NOT A CLASS, JUST MAKING A BACK UP INCASE I SOMEHOW OVERWRITE FILES ON ACCIDENT.       
+ //testing rules
+        //rule 7
+          if (lastCardPlayed.indexOf('A') != -1 || lastCardPlayed.indexOf('3') != -1 || lastCardPlayed.indexOf('5') != -1 || lastCardPlayed.indexOf('7') != -1 || lastCardPlayed.indexOf('9') != -1){
+            oddCounter++;
+              } // end if checking for odds
+          else {
+            oddCounter = 0;
+            } // end reset of odd counter if card is not odd
+          if (oddCounter == 5){
+            //winningPlayer = i;
+            playerWon = true;
+          } // end if that ends game if 5 odd cards are played in a row.
+
+          //rule 8 : King after Queen
+          String previousCard = discardPile.get(0);
+          try {
+            previousCard = discardPile.get(1);
+          } catch (Exception e){
+            previousCard = discardPile.get(0);
+          }
+          if (lastCardPlayed.indexOf('K') != -1 && previousCard.indexOf('Q') != -1){
+              JOptionPane.showMessageDialog(null, "A king was played after a Queen, current player gets to go again.");
+            if(turnIncrement == 1){ //if turns are normally progressing, subtracts one because one will be added.
+              turnIndex--;
+            }
+            else{ // if order of players has been reversed. Adds one because -1 will later be subtracted so person who played king will go again
+                turnIndex++;
+              } // end else
+            }//end if
