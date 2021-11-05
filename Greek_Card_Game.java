@@ -3,6 +3,8 @@ Catherine Larson
 UIN: 431006908
 Liliana Hildebrand
 UIN: 930006956
+Joseph Gallucci
+UIN: 630004235
 PC User
 Card game
 */
