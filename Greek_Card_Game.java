@@ -3,8 +3,6 @@ Catherine Larson
 UIN: 431006908
 Liliana Hildebrand
 UIN: 930006956
-Joseph Gallucci
-UIN: 630004235
 PC User
 Card game
 */
@@ -293,6 +291,12 @@ class Greek_Card_Game {
       ArrayList<String> drawPile = new ArrayList<String>();
       ArrayList<String> names = new ArrayList<String>();
       ArrayList<ArrayList<String>> hands = new ArrayList<ArrayList<String>>();
+      String output;
+      output = "Welcome Your Majesties! Welcome to Game of Heroes!\n Here, you shall send your greatest warriors to battle! \n Rules: \n 1. Play a card with same suit or number as card in front\n 2. Two to Five players, start with 7 cards\n 3. Ace reverses \n 4. If you play a four the next person has to draw four cards
+                \n 5. If a 2 of hearts or diamonds, then that person can switch hands with someone else \n 6. If a 9 of spades, then that person can discard all but 3 cards in their hand \n 7. If a 10 is played, next player must draw until same suit is drawn
+\n 8. 5 odd numbers in a row win.\n 9. If a king is played after a queen, the player can play any extra card, no matter if it matches";
+// Explaining the program
+      JOptionPane.showMessageDialog(null, output);
       //records number of players for indexing purposes:
       String message = "How many Gods/Goddesses? (game needs 2 to 5 players):";
       String [] options = {"2 players","3 players", "4 players", "5 players"};
