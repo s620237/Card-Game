@@ -3,19 +3,24 @@ Catherine Larson
 UIN: 431006908
 Liliana Hildebrand
 UIN: 930006956
-PC User
+Patrick Quinn
+UIN: 630002654
+Luke Gallucci
+UIN: 630004235
+CSCE-111
+PC Users
 Card game
+11/6/2021
 */
-import javax.swing.*;
+import javax.swing.JOptionPane;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Random;
-import java.io.*;
-import java.util.*;
+import java.util.Arrays;
 
 class Greek_Card_Game {
   public static String playerTurn(String playerName, ArrayList<String> playerHand, ArrayList<String> discard,
-  ArrayList<String> draw, Scanner scnr, String refCard, ArrayList<ArrayList<String>> hands, ArrayList<String> names) {
+  ArrayList<String> draw, String refCard, ArrayList<ArrayList<String>> hands, ArrayList<String> names) {
     /*
     playerTurn is a method that is run every time a player takes a turn. It checks
     for special conditions, makes sure that the draw pile is always full, and
@@ -26,8 +31,14 @@ class Greek_Card_Game {
     //sorts cards in player's hand to make game more playable:
     sortHand(playerHand);
     //replaces draw pile if it goes down to four, so that drawing four cards will work:
+    //also checks to see if there are no cards left, which quits the program, as card games would naturally quit if players ran out.
     if(draw.size()<=4) {
+      if(discard.size() <= 1 && draw.size() == 0) {
+        JOptionPane.showMessageDialog(null, "Apologies, there are no more warriors left. Please play again!");
+        System.exit(0);
+      } else {
       replaceDraw(discard, draw);
+      }
     }
     //This is where special rules go if they are dependent upon the card played before the turn:
 
@@ -35,7 +46,7 @@ class Greek_Card_Game {
       Catherine1(playerName, playerHand, draw);
       return "   ";
     }
-    
+
     if (refCard.charAt(0)=='T'){
       Luke1(playerName, playerHand, draw, refCard.charAt(2));
       return "   ";
@@ -247,7 +258,7 @@ class Greek_Card_Game {
       drawCard(draw, playerHand);
     }
   }
-  
+
   //Luke1: if 10 is played, next player must draw until same suite is called (or no more cards remain)
   public static void Luke1(String playerName, ArrayList<String> playerHand, ArrayList<String> draw, char lSuite) {
     JOptionPane.showMessageDialog(null, "Apologies, Lord/Lady " + playerName + ", you have to draw until you get a " + lSuite + "!");
@@ -257,7 +268,7 @@ class Greek_Card_Game {
     }
   } // end Luke1
 
-  //Luke2: if 9 is played - every odd is played (contrasts w/ Patrick's rule?)??
+  //Luke2: if 9 is played - every odd is played
   public static void Luke2(String playerName, ArrayList<String> playerHand, ArrayList<String> discard) {
     JOptionPane.showMessageDialog(null, "Congrats Lord/Lady " + playerName +", if you have any other odd warriors in your hand, then you can play all of them!");
     for (int i = 0; i < playerHand.size(); i++) {
@@ -285,17 +296,23 @@ class Greek_Card_Game {
       }//end for loop
     }//end for loop
     while (true) {
-      Scanner scnr = new Scanner(System.in);
       //creates array lists for discard and draw piles:
       ArrayList<String> discardPile = new ArrayList<String>();
       ArrayList<String> drawPile = new ArrayList<String>();
       ArrayList<String> names = new ArrayList<String>();
       ArrayList<ArrayList<String>> hands = new ArrayList<ArrayList<String>>();
+      //prompt that explains the rules of the game:
       String output;
-      output = "Welcome Your Majesties! Welcome to Game of Heroes!\n Here, you shall send your greatest warriors to battle! \n Rules: \n 1. Play a card with same suit or number as card in front\n 2. Two to Five players, start with 7 cards\n 3. Ace reverses \n 4. If you play a four the next person has to draw four cards
-                \n 5. If a 2 of hearts or diamonds, then that person can switch hands with someone else \n 6. If a 9 of spades, then that person can discard all but 3 cards in their hand \n 7. If a 10 is played, next player must draw until same suit is drawn
-\n 8. 5 odd numbers in a row win.\n 9. If a king is played after a queen, the player can play any extra card, no matter if it matches";
-// Explaining the program
+      output = "Welcome Your Majesties! Welcome to Game of Heroes!\n Here, you shall send your greatest warriors to battle!"+
+      "\nThe goal of this game is to be the first to get rid of all of the cards in your hand. You will start with 7 cards,\n"+
+      "and must play a card with the same suit or number as the top card of the discard pile."+
+      "\nSpecial Rules: \n1. Playing an ace will reverse the order of turns.\n2. If a four is played (Including being the first card drawn), "+
+      "the next player has to draw four cards\n3. If you play a 2 of hearts or diamonds, then you can switch hands with another player.\n4. "+
+      "If you play a 3 of spades, then you may discard all but 3 cards\n5. If a player plays a 10 (T), then the next player" +
+      " must draw until they draw a card the same suit as the 10.\n6. If 5 odd-numbered cards (not counting kings or jacks) are played," +
+      " then the player that played the fifth card wins.\n7. If a king is played immediately after a queen, the player that plays the " +
+      "queen may play any extra card, regardless of the card's suit or number.\n8. If you play a 9, you may discard all odd cards from"+
+      " your hand. These odd cards will not count towards rule #6.";
       JOptionPane.showMessageDialog(null, output);
       //records number of players for indexing purposes:
       String message = "How many Gods/Goddesses? (game needs 2 to 5 players):";
@@ -331,6 +348,7 @@ class Greek_Card_Game {
       boolean playerWon = false;
       int winningPlayer = 0;
       String lastCardPlayed = discardPile.get(0);
+      //checks to see if players have run out of cards after each turn, and if they have, then they are the winner:
       while(!playerWon) {
         for(int i = 0; i < hands.size(); i++) {
           if((hands.get(i)).size()==0) {
@@ -369,11 +387,6 @@ class Greek_Card_Game {
               } // end else
             }//end if
 
-
-
-
-
-
         if(playerWon) {
           JOptionPane.showMessageDialog(null, "Congrats Lord/Lady " + names.get(winningPlayer) + ", you win!");
           break;
@@ -385,7 +398,7 @@ class Greek_Card_Game {
           turnIndex = numPlayers-1;
         }
         lastCardPlayed = playerTurn(names.get(turnIndex), hands.get(turnIndex), discardPile,
-        drawPile, scnr, lastCardPlayed, hands, names);
+        drawPile, lastCardPlayed, hands, names);
         String topCard = discardPile.get(0);
         if(lastCardPlayed.charAt(0)=='A') {
           turnIncrement = turnIncrement*-1;
